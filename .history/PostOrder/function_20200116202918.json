@@ -1,0 +1,23 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": ["post"]
+    },
+    {
+      "name": "httpResponse",
+      "type": "http",
+      "direction": "out"
+    },
+    {
+      "type": "signalR",
+      "name": "orderChannel",
+      "hubName": "your-signalr-service-name",
+      "connectionStringSetting": "connection-string",
+      "direction": "out"
+    }
+  ]
+}
