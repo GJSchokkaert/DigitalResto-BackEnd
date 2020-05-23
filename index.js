@@ -21,6 +21,7 @@ MongoClient.connect(connectionString, {
   useNewUrlParser: true,
 })
   .then((client) => {
+    console.log("connected to mongo");
     const db = client.db("digitalresto");
     const ordersCollection = db.collection("orders");
 
@@ -35,9 +36,6 @@ MongoClient.connect(connectionString, {
     });
   })
   .catch((error) => {
-    console.log(
-      "not be able to connect to db with connectionstring " + connectionString
-    );
     console.error(error);
   });
 
