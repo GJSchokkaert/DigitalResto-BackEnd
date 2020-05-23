@@ -31,7 +31,12 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
       getPriceList(req, res);
     });
   })
-  .catch((error) => console.error(error));
+  .catch((error) => {
+    console.log(
+      "not be able to connect to db with connectionstring " + connectionString
+    );
+    console.error(error);
+  });
 
 app.listen(port, function () {
   console.log("listening on " + port);
