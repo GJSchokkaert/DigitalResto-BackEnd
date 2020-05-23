@@ -16,7 +16,10 @@ app.use(bodyParser.json());
 
 // connect to mongodb + register api calls
 const MongoClient = require("mongodb").MongoClient;
-MongoClient.connect(connectionString, { useUnifiedTopology: true })
+MongoClient.connect(connectionString, {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+})
   .then((client) => {
     const db = client.db("digitalresto");
     const ordersCollection = db.collection("orders");
