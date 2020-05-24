@@ -37,16 +37,14 @@ MongoClient.connect(connectionString, {
       res.sendFile(__dirname + "/index.html");
     });
 
-    io.on("connection", (socket) => {
-      socket.emit("news", { hello: "world" });
-      socket.on("my other event", (data) => {
-        console.log(data);
+    app.post("/order", (req, res) => {
+      postOrder(ordersCollection, req, res);
+
+      io.on("connection", (socket) => {
+        socket.emit("order", req);
       });
     });
 
-    app.post("/order", (req, res) => {
-      postOrder(ordersCollection, req, res);
-    });
     app.get("/orders", (req, res) => {
       getOrders(ordersCollection, req, res);
     });
