@@ -15,12 +15,16 @@ const connectionString = process.env.CONNECTION_STRING_MONGODB;
 
 // init express
 const app = express();
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.use(bodyParser.json());
 
 // init server and io
 const server = http.Server(app);
-const io = socketIo(server);
+const io = socketIo(server, { origins: "*:*" });
+
+io.on("connection", (socket) => {
+  console.info(`Client connected [id=${socket.id}]`);
+});
 
 // connect to mongodb + register api calls
 const MongoClient = require("mongodb").MongoClient;
@@ -29,7 +33,7 @@ MongoClient.connect(connectionString, {
   useNewUrlParser: true,
 })
   .then((client) => {
-    console.log("connected to mongo");
+    console.info("connected to mongo");
     const db = client.db("digitalresto");
     const ordersCollection = db.collection("orders");
 
@@ -38,11 +42,7 @@ MongoClient.connect(connectionString, {
     });
 
     app.post("/order", (req, res) => {
-      postOrder(ordersCollection, req, res);
-
-      io.on("connection", (socket) => {
-        socket.emit("order", req);
-      });
+      postOrder(ordersCollection, io.sockets, req, res);
     });
 
     app.get("/orders", (req, res) => {
@@ -57,5 +57,5 @@ MongoClient.connect(connectionString, {
   });
 
 server.listen(port, function () {
-  console.log("listening on " + port);
+  console.info("listening on " + port);
 });
