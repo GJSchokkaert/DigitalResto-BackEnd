@@ -1,6 +1,7 @@
 export default (collection, req, res) => {
+  const source = req.params.source;
   collection
-    .find()
+    .find({ source: source })
     .toArray()
     .then((results) => {
       res.json(results);

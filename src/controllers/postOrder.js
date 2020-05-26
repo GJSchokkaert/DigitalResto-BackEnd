@@ -1,9 +1,14 @@
-export default (collection, connectedSockets, req, res) => {
+export default (collection, barSockets, kitchenSockets, req, res) => {
   collection
-    .insertOne(req.body)
+    .insertMany(req.body)
     .then((result) => {
-      res.json(req.body);
-      connectedSockets.emit("order", req.body);
+      const orders = req.body;
+      res.json(orders);
+      const barOrders = orders.filter((d) => d.source === "bar");
+      const kitchenOrders = orders.filter((d) => d.source === "kitchen");
+      if (barOrders && barOrders.length) barSockets.emit("order", barOrders);
+      if (kitchenOrders && kitchenOrders.length)
+        kitchenSockets.emit("order", kitchenOrders);
     })
     .catch((error) => console.error(error));
 };

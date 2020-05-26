@@ -18,12 +18,22 @@ const app = express();
 app.use(cors({ origin: "*" }));
 app.use(bodyParser.json());
 
-// init server and io
+// init server and io(s)
 const server = http.Server(app);
 const io = socketIo(server, { origins: "*:*" });
+const ioBar = io.of("/bar");
+const ioKitchen = io.of("/kitchen");
 
 io.on("connection", (socket) => {
-  console.info(`Client connected [id=${socket.id}]`);
+  console.info(`Client connected to global namespace [id=${socket.id}]`);
+});
+
+ioBar.on("connection", (socket) => {
+  console.info(`Client connected to bar namespace [id=${socket.id}]`);
+});
+
+ioKitchen.on("connection", (socket) => {
+  console.info(`Client connected to kitchen namespace [id=${socket.id}]`);
 });
 
 // connect to mongodb + register api calls
@@ -42,10 +52,10 @@ MongoClient.connect(connectionString, {
     });
 
     app.post("/order", (req, res) => {
-      postOrder(ordersCollection, io.sockets, req, res);
+      postOrder(ordersCollection, ioBar, ioKitchen, req, res);
     });
 
-    app.get("/orders", (req, res) => {
+    app.get("/orders/:source", (req, res) => {
       getOrders(ordersCollection, req, res);
     });
     app.get("/priceList", (req, res) => {
